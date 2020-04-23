@@ -14,7 +14,7 @@ fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
   .then((myJson) => {
     datosCoronavirus = myJson;
     mostrarDatos(myJson);
-    dibujarGraficas(myJson)
+    dibujarGraficas(myJson);
   })
   .catch((err) => {
     console.log(err);
@@ -53,14 +53,8 @@ let mostrarDatos = function (datosCoronavirus) {
   departamentos = departamentos.filter(
     (item, indice) => departamentos.indexOf(item) === indice
   );
-  let contenedorDataList = document.getElementById("department");
-  departamentos.sort().forEach((el) => {
-    option = document.createElement("option");
-    option.value = el;
-    contenedorDataList.append(option);
-  });
+  crearDatalist(departamentos, "department");
 };
-
 
 let calcularProbabilidad = function () {
   let persona = {
@@ -109,132 +103,142 @@ let calcularProbabilidad = function () {
   Prob contagio
 */
 
-let contagio;
-let casosDepartamento = datosCoronavirus.filter(({departamento})=>persona.departament === departamento)
-
-contagio = (casosDepartamento.length / datosCoronavirus.length) * 100
-
-/********/
-
-  console.log(persona);
+  let contagio;
+  let casosDepartamento = datosCoronavirus.filter(
+    ({ departamento }) => persona.department == departamento
+  );
+  contagio = casosDepartamento.length / datosCoronavirus.length;
+  console.log(datosCoronavirus);
+  console.log(casosDepartamento);
+  /********/
+  console.log(contagio);
+  console.log(contagio * parseInt(persona.times_out) * 100);
   persona.probability =
-    (contagio +
-      parseFloat(persona.times_out) -
+    (contagio * parseInt(persona.times_out) -
       parseFloat(persona.cares.mask) -
       parseFloat(persona.cares.infection_measures) -
       parseFloat(persona.cares.house_cleaning)) *
     100;
-
-  document.getElementById("mensaje").innerText =(Math.round(persona.probability));
+  if (persona.probability <= 0) {
+    document.getElementById("mensaje").innerText = "0";
+  }else if(persona.probability >= 100) {
+    document.getElementById("mensaje").innerText = '100'
+  }else {
+    document.getElementById("mensaje").innerText = Math.round(
+      persona.probability
+    );
+  }
+  document.getElementById("results").style.display = "block";
+  document.getElementById("grafica").style.display = "block";
+  document.getElementById("grafica").style.opacity = 1;
 };
 
-/*
-let contagio;
-let casosDepartamento = datosCoronavirus.filter(({departamento})=>persona.departamento === departamento)
+let crearDatalist = (arreglo, ubicacion) => {
+  let contenedorDatalist = document.getElementById(ubicacion);
+  arreglo.sort().forEach((elm) => {
+    opcion = document.createElement("option");
+    opcion.value = elm;
+    contenedorDatalist.append(opcion);
+  });
+};
+////////////////////////
 
-contagio = (casosDepartamento.length / datosCoronavirus.length) * 100
-
-
-
-switch (persona.salidas) {
-  case 'ninguna':
-    break;
-  case '1-3':
-    contagio *= 4
-    break;
-  case '4-10':
-    contagio *= 8
-    break;
-  case '10+':
-    contagio *= 16
-    break;
-  default:
-    break;
-}
-console.log(contagio)
-
-*/
-
-
-let dibujarGraficas = function(){
-    let fechasContagio = datosCoronavirus.map(({fecha_diagnostico}) => fecha_diagnostico)
-
-    let aumentoxdia = []
-    let indice = 0
-    let dia = 0
-    let contagios = 0
-    fechasContagio.forEach(
-      fecha => {
-        if(fechasContagio.indexOf(fecha)===indice){
-          dia++
-          contagios++
-          aumentoxdia[dia] = contagios
-        }else {
-          contagios++
-          aumentoxdia[dia] = contagios
-        }
-        indice++
+let compararGraficas = function (country) {
+  if (country !== "") {
+    fetch(
+      "https://api.covid19api.com/total/country/" +
+        country +
+        "/status/confirmed?from=2020-01-01T00:00:00Z&to=2020-07-01T00:00:00Z",
+      {
+        method: "GET",
       }
     )
+      .then((respuesta) => {
+        return respuesta.json();
+      })
+      .then((myJson) => {
+        let datosOtroPais = myJson;
+        datosOtroPais = datosOtroPais
+          .map(({ Cases }) => Cases)
+          .filter((Cases) => Cases > 0);
+        console.log(datosOtroPais);
+        dibujarGraficas(datosCoronavirus, datosOtroPais);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};
 
-    new Chartist.Line('.ct-chart', {
-      labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      series: [
-       aumentoxdia
-      ]
-    }, {
-      fullWidth: true,
-      chartPadding: {
-        right: 40
-      }
+let cargarPaises = function () {
+  fetch("https://api.covid19api.com/countries", {
+    method: "GET",
+  })
+    .then((respuesta) => {
+      return respuesta.json();
+    })
+    .then((myJson) => {
+      let paises = myJson.map(({ Country }) => Country);
+      crearDatalist(paises, "datalist-paises");
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  };
-/****************Graficas PAÍSES**************/
-  let datosPaisesCovid;
-  fetch("https://api.covid19api.com/country/italy?from=2020-03-01T00:00:00Z&to=2020-04-01T00:00:00Z", {
-  method: "GET",
-  })
-  .then((respuesta) => {
-    return respuesta.json();
-  })
-  .then((myJson) => {
-    datosPaisesCovid = myJson;
-    dibujarGraficasPaises(myJson)
-    console.log(datosPaisesCovid)
-  })
-  .catch((err) => {
-    console.log(err);
+};
+
+cargarPaises();
+
+let dibujarGraficas = function (datosCoronavirus, datosOtroPais = []) {
+  let fechasContagio = datosCoronavirus.map(
+    ({ fecha_diagnostico }) => fecha_diagnostico
+  );
+
+  let aumentoXdia = [];
+  let indice = 0,
+    dia = 0,
+    contagios = 0;
+
+  fechasContagio.forEach((fecha) => {
+    if (fechasContagio.indexOf(fecha) == indice) {
+      contagios++;
+      aumentoXdia[dia] = contagios;
+      dia++;
+    } else {
+      contagios++;
+      aumentoXdia[dia] = contagios;
+    }
+    indice++;
   });
 
-  let dibujarGraficasPaises = function(){
-    let fechasContagio = datosPaisesCovid.map(({Confirmed}) => Confirmed)
-    let aumentoxdia = []
-    let indice = 0
-    let dia = 0
-    let contagios = 0
-    fechasContagio.forEach(
-      Date => {
-        if(fechasContagio.indexOf(Date)===indice){
-          dia++
-          contagios++
-          aumentoxdia[dia] = contagios
-        }
-        indice++
-      }
-    )
+  datosOtroPais = datosOtroPais.slice(0, aumentoXdia.length);
 
-    console.log(aumentoxdia)
-    console.log(contagios)
-
-    new Chartist.Line('.ct-chart-2', {
-      labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      series: [
-       fechasContagio
-      ]
-    }, {
+  new Chartist.Line(
+    ".ct-chart",
+    {
+      labels: ["Dias"],
+      series: [aumentoXdia, datosOtroPais],
+    },
+    {
       fullWidth: true,
       chartPadding: {
-        right: 40
-      }
-    });
-  }
+        right: 40,
+      },
+    }
+  );
+};
+
+let agregarEventos = function (params) {
+  let departamento = document.querySelector("[name = department]");
+  departamento.addEventListener("click", () => {
+    departamento.value = "";
+  });
+  let pais = document.querySelector("[name = pais-comparacion]");
+  pais.addEventListener("click", () => {
+    pais.value = "";
+  });
+  pais.addEventListener("change", () => {
+    compararGraficas(pais.value);
+  });
+};
+
+agregarEventos();
