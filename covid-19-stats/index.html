@@ -15,7 +15,7 @@
     />
     <title>App Covid-19</title>
   </head>
-  <body>
+  <body onload = "getLocation()">
     <nav class="navbar">
       <a href="#" class="logo">
         <img
@@ -195,6 +195,11 @@
           </p>
         </article>
       </section>
+      <section class="form-container" id="geo">
+        <p id="coordinate"></p>
+        <p id="json"></p>
+        <button class="submit hidden" type="button" onclick="getLocation()">Geolocalizar</button>
+      </section>
     </main>
     <footer>
       2020 © Survey Service by
@@ -204,9 +209,8 @@
         >PYGMALION<sup>®</sup></a
       >
     </footer>
-    <script type="text/javascriot" src="js/component.js"></script>
-    <script type="text/javascriot" src="js/geolocation.js"></script>
+    <script type="text/javascript" src="js/component.js"></script>
+    <script type="text/javascript" src="js/geolocation.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.js"></script>
-    <script src="js/component.js"></script>
   </body>
 </html>

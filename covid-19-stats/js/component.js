@@ -1,9 +1,3 @@
-let datosCoronavirus;
-
-document.querySelector(".submit").addEventListener("click", function (event) {
-  event.preventDefault();
-  calcularProbabilidad();
-});
 /*
 fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
   method: "GET",
@@ -20,6 +14,15 @@ fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
     console.log(err);
   });
 */
+
+
+let datosCoronavirus = {};
+
+document.querySelector(".submit").addEventListener("click", function (event) {
+  event.preventDefault();
+  calcularProbabilidad();
+});
+
   const peticionAPI = async function() {
     const response = await fetch('https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000');
     const json = await response.json();
@@ -27,7 +30,6 @@ fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
     mostrarDatos(json);
     dibujarGraficas(json)
 };
-
 
 let mostrarDatos = function (datosCoronavirus) {
   document.getElementById("total").append(datosCoronavirus.length);
