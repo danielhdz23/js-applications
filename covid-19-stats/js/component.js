@@ -4,7 +4,7 @@ document.querySelector(".submit").addEventListener("click", function (event) {
   event.preventDefault();
   calcularProbabilidad();
 });
-
+/*
 fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
   method: "GET",
 })
@@ -19,6 +19,15 @@ fetch("https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000", {
   .catch((err) => {
     console.log(err);
   });
+*/
+  const peticionAPI = async function() {
+    const response = await fetch('https://www.datos.gov.co/resource/gt2j-8ykr.json?$limit=5000');
+    const json = await response.json();
+    datosCoronavirus = json;
+    mostrarDatos(json);
+    dibujarGraficas(json)
+};
+
 
 let mostrarDatos = function (datosCoronavirus) {
   document.getElementById("total").append(datosCoronavirus.length);
@@ -212,10 +221,18 @@ let dibujarGraficas = function (datosCoronavirus, datosOtroPais = []) {
 
   datosOtroPais = datosOtroPais.slice(0, aumentoXdia.length);
 
+  dias = [...Array(aumentoXdia.length).keys()]
+
+    /* Reducir resolucion de grafica */
+    datosOtroPais = datosOtroPais.filter((elm, index) => index % 3 == 0)
+    aumentoXdia = aumentoXdia.filter((elm, index) => index % 3 == 0)
+    dias = dias.filter((elm, index) => index % 3 == 0)
+
+
   new Chartist.Line(
     ".ct-chart",
     {
-      labels: ["Dias"],
+      labels: dias,
       series: [aumentoXdia, datosOtroPais],
     },
     {
@@ -241,4 +258,5 @@ let agregarEventos = function (params) {
   });
 };
 
+peticionAPI();
 agregarEventos();

@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-    <link rel="stylesheet" type ="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css"/>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css"
+    />
     <title>App Covid-19</title>
   </head>
   <body>
@@ -110,12 +114,7 @@
                   <label for="none">None</label>
                 </li>
                 <li>
-                  <input
-                    name="out"
-                    type="radio"
-                    value="4"
-                    id="one-to-three"
-                  />
+                  <input name="out" type="radio" value="4" id="one-to-three" />
                   <label for="one-to-three">1-3 times</label>
                 </li>
                 <li>
@@ -136,7 +135,7 @@
           </ul>
         </form>
       </section>
-      <section class="form-container hidden" id = "results">
+      <section class="form-container hidden" id="results">
         <article class="results">
           <h1 class="header-tiitle">Resultados con los datos suministrados:</h1>
           <br />
@@ -157,10 +156,13 @@
           <span class="big-text-3 flex-inner" id="total"></span>
           <h4>Genero:</h4>
           <p class="flex-inner">
-            
-            <span class="big-text-3" id="hombres"><i class="fa fa-male big-text-2"></i></span>
-            
-            <span class="big-text-3" id="mujeres"><i class="fa fa-female big-text-2"></i></span>
+            <span class="big-text-3" id="hombres"
+              ><i class="fa fa-male big-text-2"></i
+            ></span>
+
+            <span class="big-text-3" id="mujeres"
+              ><i class="fa fa-female big-text-2"></i
+            ></span>
           </p>
           <span class="big-text-3"></span>
           <h4>Personas Recuperadas:</h4>
@@ -171,22 +173,22 @@
           <span class="big-text-3 flex-inner" id="muertes-menores-50"></span>
         </article>
       </section>
-      <section class="form-container hidden" id = "grafica">
+      <section class="form-container hidden" id="grafica">
         <article class="box chart results">
           <h3 class="header-tiitle">Curva de contagio</h3>
           <ul class="flex-outer">
             <li>
-          <label>Comparar curva con: </label>
-          <input
-            list="datalist-paises"
-            type="datalist"
-            name="pais-comparacion"
-            placeholder="Seleccione un país"
-          />
-          <datalist id="datalist-paises"> </datalist>
+              <label>Comparar curva con: </label>
+              <input
+                list="datalist-paises"
+                type="datalist"
+                name="pais-comparacion"
+                placeholder="Seleccione un país"
+              />
+              <datalist id="datalist-paises"> </datalist>
             </li>
           </ul>
-          <div class="ct-chart ct-perfect-fourth chart" id = "chart"></div>
+          <div class="ct-chart ct-perfect-fourth chart" id="chart"></div>
           <p class="content-right">
             <small class="ct-series-a"> Casos en Colombia</small>
             <small class="ct-series-b"> Pais comparado</small>
@@ -202,7 +204,9 @@
         >PYGMALION<sup>®</sup></a
       >
     </footer>
-  <script src ="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.js"></script>
+    <script type="text/javascriot" src="js/component.js"></script>
+    <script type="text/javascriot" src="js/geolocation.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.js"></script>
     <script src="js/component.js"></script>
   </body>
 </html>
